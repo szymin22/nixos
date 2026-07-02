@@ -19,8 +19,13 @@
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+
   # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  nix.settings.substituters = [ "https://attic.xuyh0120.win/lantian" ];
+  nix.settings.trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
+
+  boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore-x86_64-v3;
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -57,6 +62,20 @@
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
+
+  environment.sessionVariables = {
+  KWIN_DRM_DISABLE_TRIPLE_BUFFERING = "1";
+  };
+
+
+
+  # i dont know if it is actually needed
+  xdg.portal = {
+  enable = true;
+  extraPortals = [ pkgs.kdePackages.xdg-desktop-portal-kde ];
+  config.common.default = "kde";
+};
+
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -100,16 +119,25 @@
   # Install firefox.
   programs.firefox.enable = true;
 
+  programs.steam = {
+    enable = true;
+  };
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  services.flatpak.enable = true;
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
      git
      gh
+     alsa-utils
+     fastfetch
   #  wget
+     helium
+     equibop
   ];
 
 
