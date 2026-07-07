@@ -2,11 +2,10 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   imports = [
-    # Include the results of the hardware scan.
     ./hardware-configuration.nix
   ];
 
@@ -147,7 +146,11 @@
     zed-editor
     nil
     nixd
+    ncdu
+    neovim
   ];
+
+  programs.nix-ld.enable = true;
 
   #nvidia
   hardware.graphics.enable = true;
