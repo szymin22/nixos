@@ -5,26 +5,42 @@
 { config, pkgs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelParams = [
-     "nvidia-drm.modeset=1"
-     "nvidia-drm.fbdev=1"
+    "nvidia-drm.modeset=1"
+    "nvidia-drm.fbdev=1"
   ];
 
   swapDevices = [
-    { device = "/dev/disk/by-uuid/844218ed-44c8-40c9-9c53-bff401acfae9"; discardPolicy = "once"; priority = 0; }
+    {
+      device = "/dev/disk/by-uuid/844218ed-44c8-40c9-9c53-bff401acfae9";
+      discardPolicy = "once";
+      priority = 0;
+    }
   ];
 
-  fileSystems."/".options = [ "noatime" "compress=zstd:3" ];
-  fileSystems."/home".options = [ "subvol=home" "noatime" "compress=zstd:3" ];
-  fileSystems."/nix".options = [ "x-initrd.mount" "subvol=nix" "noatime" "compress=zstd:3" ];
+  fileSystems."/".options = [
+    "noatime"
+    "compress=zstd:3"
+  ];
+  fileSystems."/home".options = [
+    "subvol=home"
+    "noatime"
+    "compress=zstd:3"
+  ];
+  fileSystems."/nix".options = [
+    "x-initrd.mount"
+    "subvol=nix"
+    "noatime"
+    "compress=zstd:3"
+  ];
 
   zramSwap = {
     enable = true;
@@ -32,36 +48,26 @@
   };
 
   nix.settings = {
-    experimental-features = [ "nix-command" "flakes" ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
     auto-optimise-store = true;
   };
-
 
   # intel-ucode
   hardware.enableRedistributableFirmware = true;
 
-  # Use latest kernel.
+  # cachy-kernel
   nix.settings.substituters = [ "https://attic.xuyh0120.win/lantian" ];
   nix.settings.trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
-
   boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore-x86_64-v3;
 
-  networking.hostName = "nixos"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Enable networking
+  networking.hostName = "nixos";
   networking.networkmanager.enable = true;
 
-  # Set your time zone.
   time.timeZone = "Europe/Warsaw";
-
-  # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
-
+  i18n.defaultLocale = "pl_PL.UTF-8";
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "pl_PL.UTF-8";
     LC_IDENTIFICATION = "pl_PL.UTF-8";
@@ -74,41 +80,18 @@
     LC_TIME = "pl_PL.UTF-8";
   };
 
-  # Enable the X11 windowing system.
-  # You can disable this if you're only using the Wayland session.
   services.xserver.enable = true;
-
-  # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
-  
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
     konsole
   ];
+  xdg.portal.enable = true;
 
-
-
-  environment.sessionVariables = {
-  };
-
-
-
-  # i dont know if it is actually needed
-  xdg.portal = {
-  enable = true;
-  extraPortals = [ pkgs.kdePackages.xdg-desktop-portal-kde ];
-  config.common.default = "kde";
-};
-
-
-  # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
     variant = "";
   };
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
@@ -118,29 +101,20 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
   };
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users."szymon" = {
     isNormalUser = true;
     description = "szymon";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
     packages = with pkgs; [
       kdePackages.kate
-    #  thunderbird
     ];
   };
 
-  # Install firefox.
   programs.firefox.enable = true;
 
   programs.steam = {
@@ -156,25 +130,24 @@
     rulesProvider = pkgs.ananicy-rules-cachyos;
   };
 
-  # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
   services.flatpak.enable = true;
-  # List packages installed in system profile. To search, run:
+
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-     git
-     gh
-     alsa-utils
-     fastfetch
-  #  wget
-     helium
-     equibop
-     alacritty
-     btop
+    git
+    gh
+    alsa-utils
+    fastfetch
+    helium
+    equibop
+    alacritty
+    btop
+    zed-editor
+    nil
+    nixd
   ];
-
 
   #nvidia
   hardware.graphics.enable = true;
@@ -185,31 +158,6 @@
     powerManagement.enable = true;
   };
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "26.05"; # Did you read the comment?
+  system.stateVersion = "26.05"; # nie masz po co tego ruszac
 
 }
