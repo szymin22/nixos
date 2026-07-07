@@ -18,8 +18,27 @@
      "nvidia-drm.fbdev=1"
   ];
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  swapDevices = [
+    { device = "/dev/disk/by-uuid/844218ed-44c8-40c9-9c53-bff401acfae9"; discardPolicy = "once"; priority = 0; }
+  ];
 
+  fileSystems."/".options = [ "noatime" "compress=zstd:3" ];
+  fileSystems."/home".options = [ "subvol=home" "noatime" "compress=zstd:3" ];
+  fileSystems."/nix".options = [ "x-initrd.mount" "subvol=nix" "noatime" "compress=zstd:3" ];
+
+  zramSwap = {
+    enable = true;
+    memoryPercent = 25;
+  };
+
+  nix.settings = {
+    experimental-features = [ "nix-command" "flakes" ];
+    auto-optimise-store = true;
+  };
+
+
+  # intel-ucode
+  hardware.enableRedistributableFirmware = true;
 
   # Use latest kernel.
   nix.settings.substituters = [ "https://attic.xuyh0120.win/lantian" ];
@@ -62,9 +81,14 @@
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
+  
+  environment.plasma6.excludePackages = with pkgs.kdePackages; [
+    konsole
+  ];
+
+
 
   environment.sessionVariables = {
-  KWIN_DRM_DISABLE_TRIPLE_BUFFERING = "1";
   };
 
 
@@ -123,6 +147,15 @@
     enable = true;
   };
 
+  programs.gamemode.enable = true;
+  programs.gamescope.enable = true;
+
+  services.ananicy = {
+    enable = true;
+    package = pkgs.ananicy-cpp;
+    rulesProvider = pkgs.ananicy-rules-cachyos;
+  };
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
@@ -138,13 +171,19 @@
   #  wget
      helium
      equibop
+     alacritty
+     btop
   ];
 
 
   #nvidia
   hardware.graphics.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.nvidia.open = true;
+  hardware.nvidia = {
+    open = true;
+    modesetting.enable = true;
+    powerManagement.enable = true;
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
