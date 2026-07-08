@@ -148,6 +148,12 @@
     nixd
     ncdu
     neovim
+    aria2
+    unrar
+    rar
+    zip
+    unzip
+    cider-2
   ];
 
   programs.nix-ld.enable = true;

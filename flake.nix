@@ -9,16 +9,19 @@
     helium.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs =
-    inputs@{ nixpkgs, ... }:
-    {
-      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
-        modules = [
-          ./host
-          ./overlays
-        ];
-      };
+  outputs = { nixpkgs, nix-cachyos-kernel, helium, ... }: {
+    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ./host
+        ({ ... }: {
+          nixpkgs.overlays = [
+            nix-cachyos-kernel.overlays.pinned
+            helium.overlays.default
+            (import ./overlays/plasma-workspace.nix)
+          ];
+        })
+      ];
     };
+  };
 }
