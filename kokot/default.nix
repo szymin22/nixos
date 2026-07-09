@@ -12,7 +12,7 @@
 
   swapDevices = [
     {
-      device = "/dev/disk/by-uuid/844218ed-44c8-40c9-9c53-bff401acfae9";
+      device = "/dev/disk/by-uuid/8fb81654-c045-4a56-86cf-2acd1ed0dcb2";
       discardPolicy = "once";
       priority = 0;
     }
@@ -20,11 +20,12 @@
 
   zramSwap = {
     enable = true;
-    memoryPercent = 25;
+    memoryPercent = 50;
   };
 
-  networking.hostName = "nixos";
+  networking.hostName = "kokot";
   networking.networkmanager.enable = true;
+  networking.networkmanager.wifi.powersave = false;
 
   services.xserver.enable = true;
   services.displayManager.sddm.enable = true;
@@ -47,6 +48,17 @@
     ];
   };
 
-  system.stateVersion = "26.05"; # nie masz po co tego ruszac
+  hardware.nvidia = {
+    prime = {
+      offload = {
+        enable = true;
+        enableOffloadCmd = true;
+      };
+      intelBusId = "PCI:0:2:0";
+      nvidiaBusId = "PCI:1:0:0";
+    };
+  };
+
+  system.stateVersion = "26.05";
 
 }
