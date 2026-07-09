@@ -23,7 +23,7 @@
     memoryPercent = 25;
   };
 
-  networking.hostName = "nixos";
+  networking.hostName = "eternit";
   networking.networkmanager.enable = true;
 
   services.xserver.enable = true;

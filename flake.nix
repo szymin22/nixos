@@ -16,21 +16,36 @@
       helium,
       ...
     }:
+    let
+      shOverlays = [
+        nix-cachyos-kernel.overlays.pinned
+        helium.overlays.default
+        (import ./overlays/plasma-workspace.nix)
+      ];
+    in
     {
       nixosConfigurations = {
+
+        eternit = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./eternit
+            ({ ... }: {
+              nixpkgs.overlays = shOverlays;
+            })
+          ];
+        };
+
         kokot = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
             ./kokot
             ({ ... }: {
-              nixpkgs.overlays = [
-                nix-cachyos-kernel.overlays.pinned
-                helium.overlays.default
-                # (import ./overlays/plasma-workspace.nix)
-              ];
+              nixpkgs.overlays = shOverlays;
             })
           ];
         };
+
       };
     };
 }
