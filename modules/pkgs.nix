@@ -6,6 +6,16 @@
   programs.firefox.enable = true;
   programs.nix-ld.enable = true;
 
+  programs.appimage.enable = true;
+  programs.appimage.binfmt = true;
+  programs.fuse.userAllowOther = true;
+
+
+  services.mullvad-vpn = {
+  enable = true;
+  package = pkgs.mullvad-vpn;
+  };
+
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     git
@@ -27,6 +37,9 @@
     zip
     unzip
     cider-2
+    gearlever
+    protonplus
+    p7zip
   ];
 
 }
