@@ -40,6 +40,9 @@
     gearlever
     protonplus
     p7zip
+    legcord
+
   ];
+
 
 }

@@ -12,7 +12,7 @@
 
   swapDevices = [
     {
-      device = "/dev/disk/by-uuid/8fb81654-c045-4a56-86cf-2acd1ed0dcb2";
+      device = "/dev/disk/by-uuid/b65ebda4-76e1-413d-b9a7-d36c6336661a";
       discardPolicy = "once";
       priority = 0;
     }
