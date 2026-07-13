@@ -7,6 +7,11 @@
 
     helium.url = "github:oxcl/nix-flake-helium-browser";
     helium.inputs.nixpkgs.follows = "nixpkgs";
+
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -14,6 +19,7 @@
       nixpkgs,
       nix-cachyos-kernel,
       helium,
+      rust-overlay,
       ...
     }:
     let
@@ -21,6 +27,7 @@
         nix-cachyos-kernel.overlays.pinned
         helium.overlays.default
         (import ./overlays/plasma-workspace.nix)
+        rust-overlay.overlays.default
       ];
     in
     {

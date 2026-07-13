@@ -40,8 +40,9 @@
     gearlever
     protonplus
     p7zip
-    legcord
-
+    rust-bin.stable.latest.default
+    nodejs_24
+    nodePackages."@samuel/nxapi"
   ];
 
 
