@@ -10,10 +10,9 @@
   programs.appimage.binfmt = true;
   programs.fuse.userAllowOther = true;
 
-
   services.mullvad-vpn = {
-  enable = true;
-  package = pkgs.mullvad-vpn;
+    enable = true;
+    package = pkgs.mullvad-vpn;
   };
 
   # $ nix search wget
@@ -42,7 +41,7 @@
     p7zip
     rust-bin.stable.latest.default
     nodejs_24
+    obsidian
   ];
-
 
 }
